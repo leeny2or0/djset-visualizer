@@ -1,0 +1,12 @@
+# Generated plot outputs (re-created by the notebook)
+outputs/
+
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.venv/
+venv/
