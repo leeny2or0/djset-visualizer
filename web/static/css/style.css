@@ -169,6 +169,23 @@ code {
 }
 .next-stub p { color: var(--muted); margin: 0 0 18px; }
 
+/* ---------- paste / tracklist box ---------- */
+.panel + .panel { margin-top: 18px; }
+.paste { text-align: left; }
+.paste-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.paste-head h2 { font-size: 1.12rem; margin: 0; }
+.paste-sub { color: var(--muted); font-size: 0.9rem; margin: 8px 0 14px; }
+.paste-area {
+  width: 100%; resize: vertical;
+  background: color-mix(in srgb, var(--accent) 8%, var(--surface));
+  color: var(--text);
+  border: 1px solid var(--border); border-radius: 16px;
+  padding: 14px 16px; font-size: 0.9rem; line-height: 1.7;
+}
+.paste-area:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.go.small { padding: 9px 20px; font-size: 0.9rem; }
+.go.ok { background: linear-gradient(135deg, var(--accent2), var(--accent3)); }
+
 .foot {
   margin-top: 40px; display: flex; align-items: center; justify-content: space-between;
   font-family: "JetBrains Mono", monospace; font-size: 0.78rem; color: var(--muted);

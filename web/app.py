@@ -148,6 +148,7 @@ def upload():
         return redirect(url_for("index"))
 
     session["filename"] = f.filename
+    session["history_path"] = str(dest)
     session["total"] = int(len(df))
     session["n_keyed"] = int(df["_camelot"].notna().sum())
     return redirect(url_for("loaded"))
@@ -155,13 +156,16 @@ def upload():
 
 @app.route("/loaded")
 def loaded():
-    if "total" not in session:
+    path = session.get("history_path")
+    if not path or not Path(path).exists():
         return redirect(url_for("index"))
+    df = core.parse_rekordbox_txt(path)
     return render_template(
         "loaded.html",
         filename=session.get("filename", "history.txt"),
-        total=session["total"],
-        n_keyed=session["n_keyed"],
+        total=int(len(df)),
+        n_keyed=int(df["_camelot"].notna().sum()),
+        tracklist=core.tracklist_text(df),
     )
 
 

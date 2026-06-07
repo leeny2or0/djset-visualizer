@@ -137,29 +137,17 @@ def jitter_overlaps(points, jitter_r=0.085):
     return out
 
 
+# Single black & white (monochrome) design. Play order is encoded by greyscale
+# value (light grey at the start -> black at the end) plus the number in each dot.
 STYLES = {
-    "paper": dict(
-        fig_bg="white", ax_bg="white", cmap="viridis",
-        ring="#cfd2d6", spoke="#dcdee1", pos_label="#777a80",
-        point_size=170, num_fontsize=6.0, point_edge="#1a1a1a", point_edge_w=0.7,
-        text="#1a1a1a", text_stroke="white", text_stroke_w=2.0,
-        leader="#5a5d63", glow=False,
-    ),
-    "neon": dict(
-        fig_bg="#0e1116", ax_bg="#0e1116", cmap="plasma",
-        ring="#2b313c", spoke="#20242c", pos_label="#8b93a3",
-        point_size=185, num_fontsize=6.1, point_edge="#0e1116", point_edge_w=0.8,
-        text="#eef2f8", text_stroke="#0e1116", text_stroke_w=2.6,
-        leader="#5d6675", glow=True,
-    ),
-    "mono": dict(
+    "bw": dict(
         fig_bg="white", ax_bg="white",
         cmap=LinearSegmentedColormap.from_list(
-            "warm_mono", ["#f2c1a0", "#e0673f", "#7d2414"]),
-        ring="#e6e6e6", spoke="#f0f0f0", pos_label="#c0c0c0",
-        point_size=160, num_fontsize=5.9, point_edge="#222222", point_edge_w=0.6,
-        text="#222222", text_stroke="white", text_stroke_w=2.0,
-        leader="#cfcfcf", glow=False,
+            "bw_order", ["#c7c7c7", "#7a7a7a", "#111111"]),
+        ring="#d2d2d2", spoke="#e3e3e3", pos_label="#9a9a9a",
+        point_size=170, num_fontsize=6.0, point_edge="#111111", point_edge_w=0.7,
+        text="#111111", text_stroke="white", text_stroke_w=2.0,
+        leader="#b0b0b0", glow=False,
     ),
 }
 
@@ -177,7 +165,19 @@ def _save(fig, out_path, fig_bg, dpi=300):
     return saved
 
 
-def plot_harmonic_journey(df, output_path, style="paper"):
+def tracklist_text(df, numbered=True, sep=" - "):
+    """'Artist - Track Title' lines for pasting into a SoundCloud description."""
+    lines = []
+    for i, (_, row) in enumerate(df.reset_index(drop=True).iterrows()):
+        artist = str(row.get("Artist") or "").strip()
+        title = str(row.get("Track Title") or "").strip()
+        body = f"{artist}{sep}{title}" if (artist and title) else (
+            title or artist or f"Track {i + 1}")
+        lines.append(f"{i + 1}. {body}" if numbered else body)
+    return "\n".join(lines)
+
+
+def plot_harmonic_journey(df, output_path, style="bw"):
     """Square 1:1 Camelot wheel journey plot. Saves PNG + SVG."""
     if style not in STYLES:
         raise ValueError(f"unknown style {style!r}")
@@ -314,7 +314,7 @@ def plot_harmonic_journey(df, output_path, style="paper"):
     return saved
 
 
-def plot_tracklist(df, output_path, style="paper", per_page=25):
+def plot_tracklist(df, output_path, style="bw", per_page=25):
     """Text tracklist sheet(s): Track Title | Artist | BPM | Key. PNG + SVG.
 
     Returns {"page1": {"png":..,"svg":..}, "page2": {...}, ...}.

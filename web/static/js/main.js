@@ -37,6 +37,31 @@
     });
   }
 
+  // Copy the tracklist to the clipboard (for the SoundCloud description).
+  var copyBtn = document.getElementById("copyBtn");
+  if (copyBtn) {
+    copyBtn.addEventListener("click", function () {
+      var area = document.getElementById(copyBtn.dataset.target);
+      if (!area) return;
+      var done = function () {
+        var old = copyBtn.textContent;
+        copyBtn.textContent = "복사됨 ✓";
+        copyBtn.classList.add("ok");
+        setTimeout(function () {
+          copyBtn.textContent = old;
+          copyBtn.classList.remove("ok");
+        }, 1600);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(area.value).then(done, function () {
+          area.select(); document.execCommand("copy"); done();
+        });
+      } else {
+        area.select(); document.execCommand("copy"); done();
+      }
+    });
+  }
+
   // Reshuffle colours: reload to get a fresh server-generated palette.
   var reshuffle = document.getElementById("reshuffle");
   if (reshuffle) {
