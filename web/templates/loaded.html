@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Camelot Journey — 불러옴{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <p class="eyebrow">파일을 읽었어요</p>
+  <h1 class="headline">{{ total }}곡 로드 완료.</h1>
+  <p class="sub"><code>{{ filename }}</code> 에서 트랙 <b>{{ total }}</b>개를 읽었고,
+     그중 <b>{{ n_keyed }}</b>개에 키 정보가 있어요.</p>
+</section>
+
+<div class="panel next-stub">
+  <p>다음 단계(디자인 선택 · 휠/트랙리스트 생성 화면)는 이어서 만들 예정이에요.</p>
+  <a class="go ghost" href="{{ url_for('index') }}">← 다른 파일 올리기</a>
+</div>
+{% endblock %}
