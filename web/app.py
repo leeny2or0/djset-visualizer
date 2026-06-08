@@ -16,8 +16,8 @@ import tempfile
 import uuid
 from pathlib import Path
 
-from flask import (Flask, flash, redirect, render_template, request, session,
-                   url_for)
+from flask import (Flask, abort, flash, redirect, render_template, request,
+                   send_file, session, url_for)
 
 import camelot_core as core
 
@@ -127,6 +127,9 @@ def upload():
     session["sid"] = sid
     udir = UPLOAD_ROOT / sid
     udir.mkdir(parents=True, exist_ok=True)
+    for old in udir.glob("*"):  # clear previous run's images
+        if old.suffix.lower() in (".png", ".svg"):
+            old.unlink()
     dest = udir / f"history{ext}"
     f.save(dest)
 
@@ -136,26 +139,58 @@ def upload():
         flash(f"파일을 읽지 못했어요: {exc}")
         return redirect(url_for("index"))
 
+    df, removed = core.dedupe_tracks(df)
+
+    # generate the black & white figures (wheel + Instagram tracklist sheet)
+    try:
+        wheel = core.plot_harmonic_journey(df, udir / "wheel.png")
+        pages = core.plot_tracklist(df, udir / "tracklist.png")
+    except Exception as exc:  # noqa: BLE001
+        flash(f"이미지를 만들지 못했어요: {exc}")
+        return redirect(url_for("index"))
+
     session["filename"] = f.filename
     session["history_path"] = str(dest)
     session["total"] = int(len(df))
     session["n_keyed"] = int(df["_camelot"].notna().sum())
-    return redirect(url_for("loaded"))
+    session["removed"] = int(removed)
+    session["wheel"] = {k: Path(v).name for k, v in wheel.items()}
+    session["pages"] = [{k: Path(v).name for k, v in pg.items()}
+                        for pg in pages.values()]
+    return redirect(url_for("result"))
 
 
-@app.route("/loaded")
-def loaded():
+@app.route("/result")
+def result():
     path = session.get("history_path")
-    if not path or not Path(path).exists():
+    if not path or not Path(path).exists() or "wheel" not in session:
         return redirect(url_for("index"))
     df = core.parse_rekordbox_txt(path)
+    df, _ = core.dedupe_tracks(df)
     return render_template(
-        "loaded.html",
+        "result.html",
         filename=session.get("filename", "history.txt"),
-        total=int(len(df)),
-        n_keyed=int(df["_camelot"].notna().sum()),
+        total=session.get("total"),
+        n_keyed=session.get("n_keyed"),
+        removed=session.get("removed", 0),
+        wheel=session.get("wheel"),
+        pages=session.get("pages", []),
         tracklist=core.tracklist_text(df),
     )
+
+
+@app.route("/file/<path:name>")
+def file(name):
+    """Serve a generated image from the current session's folder."""
+    sid = session.get("sid")
+    if not sid:
+        abort(404)
+    safe = Path(name).name
+    target = UPLOAD_ROOT / sid / safe
+    if not target.exists():
+        abort(404)
+    return send_file(target, as_attachment=request.args.get("dl") == "1",
+                     download_name=safe)
 
 
 if __name__ == "__main__":

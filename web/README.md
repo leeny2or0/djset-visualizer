@@ -19,12 +19,14 @@ is randomised on every page load** (soft morphing blobs + faint geometry).
 
 ## Status
 
-- **Step 1 (done):** landing screen — upload box + "how to export your
-  rekordbox history" instructions. Uploads are parsed and validated; the
-  `/loaded` screen confirms how many tracks were read.
-- Next steps (design picker, wheel + tracklist generation/download) build on
-  `camelot_core.py`, which already ports the full notebook logic
-  (`plot_harmonic_journey`, `plot_tracklist`) — PNG + SVG only, no PDF.
+- Upload a rekordbox history `.txt` → it is parsed, **duplicate tracks are
+  removed**, and the server generates:
+  - the black & white **harmonic wheel** image (PNG + SVG)
+  - the **Instagram tracklist sheet** image, 25 tracks/page (PNG + SVG per page)
+  - the **SoundCloud** "Artist - Track" text list (copy button)
+  The `/result` page previews all of them with **download** links.
+- The static `web/index.html` (double-click, no server) does the text list only
+  — image generation needs matplotlib, i.e. the Flask server.
 
 ## Run locally
 

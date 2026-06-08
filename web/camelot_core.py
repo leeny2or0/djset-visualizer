@@ -108,6 +108,21 @@ def parse_rekordbox_txt(filepath):
     return df
 
 
+def dedupe_tracks(df, subset=("Track Title", "Artist"), keep="first"):
+    """Drop duplicate tracks (same title + artist), keeping the first play.
+
+    Returns (deduped_df, removed_count).
+    """
+    cols = [c for c in subset if c in df.columns]
+    if not cols:
+        return df.reset_index(drop=True), 0
+    key = pd.concat(
+        [df[c].fillna("").astype(str).str.strip().str.lower() for c in cols], axis=1)
+    mask = ~key.duplicated(keep=keep)
+    removed = int((~mask).sum())
+    return df[mask].reset_index(drop=True), removed
+
+
 def camelot_xy(camelot):
     if camelot is None:
         return None

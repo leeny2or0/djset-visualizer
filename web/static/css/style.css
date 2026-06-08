@@ -121,6 +121,7 @@ code, .mono { font-family: "JetBrains Mono", ui-monospace, Menlo, monospace; }
   border: 1.5px solid var(--border); box-shadow: none; text-decoration: none;
   display: inline-block;
 }
+.form-note { text-align: center; color: var(--muted); font-size: 0.84rem; margin: 0; }
 
 /* ---------- how-to ---------- */
 .how {
@@ -183,8 +184,22 @@ code {
   padding: 14px 16px; font-size: 0.9rem; line-height: 1.7;
 }
 .paste-area:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
-.go.small { padding: 9px 20px; font-size: 0.9rem; }
+.go.small { padding: 9px 18px; font-size: 0.86rem; text-decoration: none; }
 .go.ok { background: linear-gradient(135deg, var(--accent2), var(--accent3)); }
+
+/* ---------- generated figures ---------- */
+.figure { text-align: left; }
+.dl-row { display: flex; align-items: center; gap: 8px; }
+.fig-img {
+  width: 100%; height: auto; display: block;
+  margin-top: 14px; border-radius: 16px;
+  border: 1px solid var(--border);
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.10);
+}
+.fig-block { margin-top: 14px; }
+.fig-block .dl-row { margin-top: 10px; justify-content: flex-end; }
+.muted-sm { color: var(--muted); font-size: 0.82rem; font-weight: 500; }
 
 .foot {
   margin-top: 40px; display: flex; align-items: center; justify-content: space-between;

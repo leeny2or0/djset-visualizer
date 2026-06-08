@@ -62,6 +62,16 @@
     });
   }
 
+  // Image generation takes a few seconds — show a working state on submit.
+  var goBtn = document.getElementById("goBtn");
+  if (goBtn && goBtn.form) {
+    goBtn.form.addEventListener("submit", function () {
+      goBtn.textContent = "이미지 생성 중…";
+      goBtn.disabled = true;
+      goBtn.style.opacity = "0.7";
+    });
+  }
+
   // Reshuffle colours: reload to get a fresh server-generated palette.
   var reshuffle = document.getElementById("reshuffle");
   if (reshuffle) {
