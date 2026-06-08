@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Camelot Journey — 업로드</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+  <!-- relative path works when you double-click this file (file://) -->
+  <link rel="stylesheet" href="static/css/style.css">
+</head>
+<body>
+
+  <!-- organic / abstract-geometric background (filled in by JS, monochrome) -->
+  <div class="bg-field" aria-hidden="true">
+    <svg class="geo" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice">
+      <circle cx="18" cy="26" r="13" fill="none" stroke="currentColor"
+              stroke-width="0.18" opacity="0.4"/>
+      <circle cx="82" cy="72" r="20" fill="none" stroke="currentColor"
+              stroke-width="0.18" opacity="0.35"/>
+      <polygon points="70,12 88,30 62,34" fill="none" stroke="currentColor"
+               stroke-width="0.18" opacity="0.32"/>
+      <line x1="6" y1="84" x2="40" y2="60" stroke="currentColor"
+            stroke-width="0.16" opacity="0.32"/>
+    </svg>
+  </div>
+
+  <main class="shell">
+    <section class="hero">
+      <p class="eyebrow">REKORDBOX · HARMONIC JOURNEY</p>
+      <h1 class="headline">DJ 셋의 흐름을<br>한 장의 지도로.</h1>
+      <p class="sub">rekordbox 히스토리 파일을 올리면,
+         사운드클라우드 소개글용 트랙리스트를 만들어 드려요.</p>
+    </section>
+
+    <form class="uploader" id="form">
+      <label id="drop" class="dropzone" for="history">
+        <input id="history" type="file" accept=".txt,.tsv,.csv,text/plain" hidden>
+        <div class="drop-inner">
+          <div class="drop-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="38" height="38" fill="none"
+                 stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+                 stroke-linejoin="round">
+              <path d="M12 16V4"/><path d="M7 9l5-5 5 5"/>
+              <path d="M5 16v3a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-3"/>
+            </svg>
+          </div>
+          <p class="drop-title">히스토리 파일을 여기에 끌어다 놓거나 클릭해서 선택</p>
+          <p class="drop-hint">rekordbox에서 내보낸 <code>.txt</code> 파일 (탭 구분)</p>
+          <p class="drop-file" id="fileName" hidden></p>
+        </div>
+      </label>
+    </form>
+
+    <!-- result: the pasteable tracklist (shown after a file is read) -->
+    <section class="panel paste" id="result" hidden>
+      <div class="paste-head">
+        <h2 id="resultTitle">트랙리스트</h2>
+        <button id="copyBtn" class="go small" type="button" data-target="tracklist">복사</button>
+      </div>
+      <p class="paste-sub"><code>아티스트 - 트랙명</code> 형식이에요.
+         복사해서 사운드클라우드 업로드 소개글에 붙여넣으세요.</p>
+      <textarea id="tracklist" class="paste-area mono" rows="12" readonly
+                spellcheck="false"></textarea>
+    </section>
+
+    <section class="how">
+      <h2>rekordbox에서 히스토리 파일 내보내는 방법</h2>
+      <ol class="steps">
+        <li><span class="num">1</span><div><b>히스토리 열기</b>
+          <p>rekordbox 좌측 사이드바의 <code>Histories</code>(히스토리)를 펼쳐
+             원하는 날짜의 세션을 선택합니다.</p></div></li>
+        <li><span class="num">2</span><div><b>필요한 컬럼 켜기</b>
+          <p>트랙 목록 헤더를 우클릭해 <code>Track Title</code> · <code>Artist</code> ·
+             <code>BPM</code> · <code>Key</code> 컬럼이 보이도록 체크합니다.</p></div></li>
+        <li><span class="num">3</span><div><b>파일로 내보내기</b>
+          <p>목록 위에서 우클릭 → <code>Export a playlist to a file</code>(파일로 내보내기)를
+             선택하고, 형식을 <code>txt</code>(텍스트)로 저장합니다.</p></div></li>
+        <li><span class="num">4</span><div><b>업로드</b>
+          <p>저장한 <code>.txt</code> 파일을 위 업로드 창에 올리면 끝입니다.
+             인코딩(UTF-16 등)은 자동으로 처리돼요.</p></div></li>
+      </ol>
+      <p class="note">파일은 이 페이지(브라우저) 안에서만 처리되며 어디에도 업로드되지 않습니다.</p>
+    </section>
+
+    <footer class="foot">
+      <span>Camelot Journey</span>
+      <button id="reshuffle" type="button" title="톤 새로고침">↻ 톤</button>
+    </footer>
+  </main>
+
+  <script src="static/js/theme.js"></script>
+  <script src="static/js/static-app.js"></script>
+</body>
+</html>

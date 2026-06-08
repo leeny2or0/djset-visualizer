@@ -10,7 +10,6 @@ Run:
     # open http://127.0.0.1:5000
 """
 
-import colorsys
 import os
 import random
 import tempfile
@@ -46,42 +45,32 @@ def _blob_radius():
 
 def make_theme():
     """Build a fresh, harmonious palette + organic blob field."""
-    h0 = random.random()
-    spread = random.uniform(0.06, 0.30)
-    direction = random.choice((-1, 1))
-    scheme = random.choice(("analogous", "analogous", "triadic", "split"))
-    if scheme == "triadic":
-        hues = [(h0 + k / 3.0) % 1.0 for k in range(4)]
-    elif scheme == "split":
-        hues = [h0, (h0 + 0.5 - 0.08) % 1.0, (h0 + 0.5 + 0.08) % 1.0,
-                (h0 + spread) % 1.0]
-    else:
-        hues = [(h0 + direction * i * spread) % 1.0 for i in range(4)]
+    # Monochrome (black & white) only. What changes every load is the set of
+    # grey tones plus the organic blob shapes/positions — never the hue.
+    dark = random.random() < 0.30  # mostly light, occasionally a dark variant
 
-    dark = random.random() < 0.42
-
+    base = random.uniform(0.55, 0.82) if dark else random.uniform(0.16, 0.46)
     accents = []
-    for h in hues:
-        s = random.uniform(0.52, 0.85)
-        light = random.uniform(0.5, 0.64) if dark else random.uniform(0.54, 0.7)
-        accents.append(_hex(colorsys.hls_to_rgb(h, light, s)))
+    for _ in range(4):
+        v = min(0.92, max(0.05, base + random.uniform(-0.14, 0.18)))
+        accents.append(_hex((v, v, v)))
 
     if dark:
-        bg = _hex(colorsys.hls_to_rgb(h0, 0.10, 0.32))
-        bg2 = _hex(colorsys.hls_to_rgb(hues[-1], 0.13, 0.30))
-        surface = "rgba(28, 27, 32, 0.55)"
-        text = "#f4f1ec"
-        muted = "#b8b2aa"
-        border = "rgba(255, 255, 255, 0.14)"
-        card_shadow = "0 24px 60px rgba(0,0,0,0.45)"
+        bg = "#0f0f0f"
+        bg2 = "#1b1b1b"
+        surface = "rgba(255, 255, 255, 0.06)"
+        text = "#f2f2f2"
+        muted = "#a9a9a9"
+        border = "rgba(255, 255, 255, 0.16)"
+        card_shadow = "0 24px 60px rgba(0,0,0,0.5)"
     else:
-        bg = _hex(colorsys.hls_to_rgb(h0, 0.955, 0.55))
-        bg2 = _hex(colorsys.hls_to_rgb(hues[-1], 0.93, 0.5))
-        surface = "rgba(255, 255, 255, 0.62)"
-        text = "#1c1b1a"
-        muted = "#6c665f"
-        border = "rgba(0, 0, 0, 0.08)"
-        card_shadow = "0 24px 60px rgba(40,30,20,0.16)"
+        bg = "#f3f3f3"
+        bg2 = "#e8e8e8"
+        surface = "rgba(255, 255, 255, 0.72)"
+        text = "#141414"
+        muted = "#6a6a6a"
+        border = "rgba(0, 0, 0, 0.10)"
+        card_shadow = "0 24px 60px rgba(0,0,0,0.12)"
 
     blobs = []
     for _ in range(6):
