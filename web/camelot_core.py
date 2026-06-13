@@ -180,16 +180,56 @@ def _save(fig, out_path, fig_bg, dpi=300):
     return saved
 
 
-def tracklist_text(df, numbered=True, sep=" - "):
-    """'Artist - Track Title' lines for pasting into a SoundCloud description."""
-    lines = []
+TLMODES = ("num_dot", "num_paren", "num_circled", "plain", "by_title", "by_artist")
+
+
+def circled_number(n):
+    """Return the circled unicode digit for n (①…㊿); '(n)' beyond 50."""
+    if 1 <= n <= 20:
+        return chr(0x2460 + n - 1)
+    if 21 <= n <= 35:
+        return chr(0x3251 + n - 21)
+    if 36 <= n <= 50:
+        return chr(0x32B1 + n - 36)
+    return f"({n})"
+
+
+def tracklist_text(df, mode="num_dot", sep=" - "):
+    """Build the SoundCloud "Artist - Track" text list.
+
+    mode:
+      num_dot     -> "1. Artist - Track"   (play order)
+      num_paren   -> "(1) Artist - Track"  (play order)
+      num_circled -> "① Artist - Track"    (play order)
+      plain       -> "Artist - Track"      (play order, no number)
+      by_title    -> "Artist - Track"      (no number, Track Title A->Z)
+      by_artist   -> "Artist - Track"      (no number, Artist A->Z)
+    """
+    items = []
     for i, (_, row) in enumerate(df.reset_index(drop=True).iterrows()):
         artist = str(row.get("Artist") or "").strip()
         title = str(row.get("Track Title") or "").strip()
         body = f"{artist}{sep}{title}" if (artist and title) else (
             title or artist or f"Track {i + 1}")
-        lines.append(f"{i + 1}. {body}" if numbered else body)
-    return "\n".join(lines)
+        items.append({"artist": artist, "title": title, "body": body})
+
+    if mode == "by_title":
+        items.sort(key=lambda x: x["title"].lower())
+    elif mode == "by_artist":
+        items.sort(key=lambda x: x["artist"].lower())
+
+    out = []
+    for i, it in enumerate(items):
+        if mode == "num_dot":
+            marker = f"{i + 1}. "
+        elif mode == "num_paren":
+            marker = f"({i + 1}) "
+        elif mode == "num_circled":
+            marker = circled_number(i + 1) + " "
+        else:
+            marker = ""
+        out.append(marker + it["body"])
+    return "\n".join(out)
 
 
 def plot_harmonic_journey(df, output_path, style="bw", cmap=None):

@@ -46,6 +46,17 @@ CMAPS = [
 ]
 CMAP_VALUES = {v for v, _ in CMAPS}
 
+# SoundCloud text-list numbering / ordering (value, fallback label, i18n key).
+TLMODES = [
+    ("num_dot", "1. 2. 3.", "tl.numDot"),
+    ("num_paren", "(1) (2) (3)", "tl.numParen"),
+    ("num_circled", "① ② ③", "tl.numCircled"),
+    ("plain", "No numbers", "tl.plain"),
+    ("by_title", "No numbers · Title A→Z", "tl.byTitle"),
+    ("by_artist", "No numbers · Artist A→Z", "tl.byArtist"),
+]
+TLMODE_VALUES = {v for v, _, _ in TLMODES}
+
 
 # --------------------------------------------------------------------------- #
 # Routes
@@ -116,6 +127,11 @@ def result():
         cmap = "bw"
     session["cmap"] = cmap
 
+    tlmode = request.args.get("tlmode", session.get("tlmode", "num_dot"))
+    if tlmode not in TLMODE_VALUES:
+        tlmode = "num_dot"
+    session["tlmode"] = tlmode
+
     df = core.parse_rekordbox_txt(path)
     df, _ = core.dedupe_tracks(df)
 
@@ -135,8 +151,10 @@ def result():
         wheel=wheel,
         cmaps=CMAPS,
         cmap=cmap,
+        tlmodes=TLMODES,
+        tlmode=tlmode,
         pages=session.get("pages", []),
-        tracklist=core.tracklist_text(df),
+        tracklist=core.tracklist_text(df, mode=tlmode),
     )
 
 

@@ -53,6 +53,16 @@
       </div>
       <p class="paste-sub" data-i18n="res.pasteSub"><code>Artist - Track</code> format.
          Copy and paste it into your SoundCloud upload description.</p>
+      <label class="cmap-row" for="tlSelect"><span data-i18n="res.tlLabel">Numbering</span>
+        <select id="tlSelect">
+          <option value="num_dot" data-i18n="tl.numDot">1. 2. 3.</option>
+          <option value="num_paren" data-i18n="tl.numParen">(1) (2) (3)</option>
+          <option value="num_circled" data-i18n="tl.numCircled">① ② ③</option>
+          <option value="plain" data-i18n="tl.plain">No numbers</option>
+          <option value="by_title" data-i18n="tl.byTitle">No numbers · Title A→Z</option>
+          <option value="by_artist" data-i18n="tl.byArtist">No numbers · Artist A→Z</option>
+        </select>
+      </label>
       <textarea id="tracklist" class="paste-area mono" rows="12" readonly
                 spellcheck="false"></textarea>
     </section>

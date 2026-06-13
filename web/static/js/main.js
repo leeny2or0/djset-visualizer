@@ -76,12 +76,11 @@
     });
   }
 
-  // Wheel colormap dropdown: regenerate the wheel with the chosen colormap.
-  var cmapSelect = document.getElementById("cmapSelect");
-  if (cmapSelect) {
-    cmapSelect.addEventListener("change", function () {
-      var base = cmapSelect.dataset.base || "";
-      window.location = base + "?cmap=" + encodeURIComponent(cmapSelect.value);
+  // Server dropdowns (colormap, numbering): reload /result with the chosen value.
+  document.querySelectorAll("select[data-base]").forEach(function (sel) {
+    sel.addEventListener("change", function () {
+      var param = sel.dataset.param || "cmap";
+      window.location = sel.dataset.base + "?" + param + "=" + encodeURIComponent(sel.value);
     });
-  }
+  });
 })();

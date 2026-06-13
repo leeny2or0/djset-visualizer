@@ -22,7 +22,7 @@
     </div>
   </div>
   <label class="cmap-row" for="cmapSelect"><span data-i18n="res.cmapLabel">Dot colormap</span>
-    <select id="cmapSelect" data-base="{{ url_for('result') }}">
+    <select id="cmapSelect" data-base="{{ url_for('result') }}" data-param="cmap">
       {% for value, label in cmaps %}
       <option value="{{ value }}" {{ 'selected' if value == cmap }}
               {% if value == 'bw' %}data-i18n="cmap.bw"{% endif %}>{{ label }}</option>
@@ -58,6 +58,13 @@
   </div>
   <p class="paste-sub" data-i18n="res.pasteSub"><code>Artist - Track</code> format.
      Copy and paste it into your SoundCloud upload description.</p>
+  <label class="cmap-row" for="tlSelect"><span data-i18n="res.tlLabel">Numbering</span>
+    <select id="tlSelect" data-base="{{ url_for('result') }}" data-param="tlmode">
+      {% for value, label, key in tlmodes %}
+      <option value="{{ value }}" {{ 'selected' if value == tlmode }} data-i18n="{{ key }}">{{ label }}</option>
+      {% endfor %}
+    </select>
+  </label>
   <textarea id="tracklist" class="paste-area mono" rows="12" readonly
             spellcheck="false">{{ tracklist }}</textarea>
 </section>
