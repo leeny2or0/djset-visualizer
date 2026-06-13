@@ -1,8 +1,9 @@
 """Camelot Journey — web service.
 
-Step 1 (this build): a landing screen where you upload a rekordbox history
-.txt, with instructions on how to export it. The whole site uses an organic,
-abstract-geometric look whose colour scheme is randomised on every page load.
+Upload a rekordbox history .txt; the site (black, minimal — BBH Bartle titles,
+Consolas body) removes duplicate tracks and generates the harmonic wheel image
+(with a selectable dot colormap), the Instagram tracklist sheet, and the
+SoundCloud text list, all downloadable.
 
 Run:
     pip install -r requirements.txt
@@ -11,7 +12,6 @@ Run:
 """
 
 import os
-import random
 import tempfile
 import uuid
 from pathlib import Path
@@ -31,76 +31,20 @@ ALLOWED_EXT = {".txt", ".tsv", ".csv"}
 app.config["MAX_CONTENT_LENGTH"] = 5 * 1024 * 1024  # 5 MB
 
 
-# --------------------------------------------------------------------------- #
-# Organic, randomised colour theme — new on every page load.
-# --------------------------------------------------------------------------- #
-def _hex(rgb):
-    return "#%02x%02x%02x" % tuple(int(round(c * 255)) for c in rgb)
-
-
-def _blob_radius():
-    v = [random.randint(28, 72) for _ in range(8)]
-    return "%d%% %d%% %d%% %d%% / %d%% %d%% %d%% %d%%" % tuple(v)
-
-
-def make_theme():
-    """Build a fresh, harmonious palette + organic blob field."""
-    # Monochrome (black & white) only. What changes every load is the set of
-    # grey tones plus the organic blob shapes/positions — never the hue.
-    dark = random.random() < 0.30  # mostly light, occasionally a dark variant
-
-    base = random.uniform(0.55, 0.82) if dark else random.uniform(0.16, 0.46)
-    accents = []
-    for _ in range(4):
-        v = min(0.92, max(0.05, base + random.uniform(-0.14, 0.18)))
-        accents.append(_hex((v, v, v)))
-
-    if dark:
-        bg = "#0f0f0f"
-        bg2 = "#1b1b1b"
-        surface = "rgba(255, 255, 255, 0.06)"
-        text = "#f2f2f2"
-        muted = "#a9a9a9"
-        border = "rgba(255, 255, 255, 0.16)"
-        card_shadow = "0 24px 60px rgba(0,0,0,0.5)"
-    else:
-        bg = "#f3f3f3"
-        bg2 = "#e8e8e8"
-        surface = "rgba(255, 255, 255, 0.72)"
-        text = "#141414"
-        muted = "#6a6a6a"
-        border = "rgba(0, 0, 0, 0.10)"
-        card_shadow = "0 24px 60px rgba(0,0,0,0.12)"
-
-    blobs = []
-    for _ in range(6):
-        blobs.append(dict(
-            color=random.choice(accents),
-            x=round(random.uniform(-12, 88), 1),
-            y=round(random.uniform(-12, 88), 1),
-            size=round(random.uniform(26, 54), 1),
-            blur=round(random.uniform(28, 70), 1),
-            opacity=round(random.uniform(0.28, 0.55) if dark
-                          else random.uniform(0.4, 0.72), 2),
-            radius=_blob_radius(),
-            dur=round(random.uniform(20, 38), 1),
-            delay=round(random.uniform(-24, 0), 1),
-            drift=round(random.uniform(2, 7), 1),
-        ))
-
-    return dict(
-        accents=accents, accent=accents[0], accent2=accents[1 % len(accents)],
-        accent3=accents[2 % len(accents)],
-        bg=bg, bg2=bg2, surface=surface, text=text, muted=muted, border=border,
-        card_shadow=card_shadow, dark=dark, blobs=blobs,
-        seed=uuid.uuid4().hex[:8],
-    )
-
-
-@app.context_processor
-def inject_theme():
-    # A new theme for every render -> colours change every time you open a page.
-    return {"theme": make_theme()}
+# Colormaps offered in the wheel's "점 컬러맵" dropdown (value -> label).
+CMAPS = [
+    ("bw", "흑백 (기본)"),
+    ("viridis", "Viridis"),
+    ("plasma", "Plasma"),
+    ("magma", "Magma"),
+    ("inferno", "Inferno"),
+    ("cividis", "Cividis"),
+    ("turbo", "Turbo"),
+    ("cool", "Cool"),
+    ("coolwarm", "Cool–Warm"),
+    ("Spectral", "Spectral"),
+]
+CMAP_VALUES = {v for v, _ in CMAPS}
 
 
 # --------------------------------------------------------------------------- #
@@ -141,9 +85,9 @@ def upload():
 
     df, removed = core.dedupe_tracks(df)
 
-    # generate the black & white figures (wheel + Instagram tracklist sheet)
+    # generate the default (black & white) wheel + Instagram tracklist sheet
     try:
-        wheel = core.plot_harmonic_journey(df, udir / "wheel.png")
+        core.plot_harmonic_journey(df, udir / "wheel_bw.png", cmap="bw")
         pages = core.plot_tracklist(df, udir / "tracklist.png")
     except Exception as exc:  # noqa: BLE001
         flash(f"이미지를 만들지 못했어요: {exc}")
@@ -154,7 +98,7 @@ def upload():
     session["total"] = int(len(df))
     session["n_keyed"] = int(df["_camelot"].notna().sum())
     session["removed"] = int(removed)
-    session["wheel"] = {k: Path(v).name for k, v in wheel.items()}
+    session["cmap"] = "bw"
     session["pages"] = [{k: Path(v).name for k, v in pg.items()}
                         for pg in pages.values()]
     return redirect(url_for("result"))
@@ -163,17 +107,34 @@ def upload():
 @app.route("/result")
 def result():
     path = session.get("history_path")
-    if not path or not Path(path).exists() or "wheel" not in session:
+    sid = session.get("sid")
+    if not sid or not path or not Path(path).exists() or "pages" not in session:
         return redirect(url_for("index"))
+
+    cmap = request.args.get("cmap", session.get("cmap", "bw"))
+    if cmap not in CMAP_VALUES:
+        cmap = "bw"
+    session["cmap"] = cmap
+
     df = core.parse_rekordbox_txt(path)
     df, _ = core.dedupe_tracks(df)
+
+    # generate the wheel for this colormap on demand (cached by filename)
+    udir = UPLOAD_ROOT / sid
+    wheel_png = udir / f"wheel_{cmap}.png"
+    if not wheel_png.exists():
+        core.plot_harmonic_journey(df, wheel_png, cmap=cmap)
+    wheel = {"png": wheel_png.name, "svg": wheel_png.with_suffix(".svg").name}
+
     return render_template(
         "result.html",
         filename=session.get("filename", "history.txt"),
         total=session.get("total"),
         n_keyed=session.get("n_keyed"),
         removed=session.get("removed", 0),
-        wheel=session.get("wheel"),
+        wheel=wheel,
+        cmaps=CMAPS,
+        cmap=cmap,
         pages=session.get("pages", []),
         tracklist=core.tracklist_text(df),
     )

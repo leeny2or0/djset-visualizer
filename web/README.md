@@ -4,8 +4,9 @@ The notebook (`../camelot_journey.ipynb`) turned into a small web app. You
 upload a rekordbox history `.txt` and (eventually) get the harmonic-journey
 wheel and the text tracklist sheet back.
 
-The whole UI uses an **organic, abstract-geometric** look whose **colour scheme
-is randomised on every page load** (soft morphing blobs + faint geometry).
+The UI is **black and minimal** — titles in **BBH Bartle** (Google Fonts),
+body in **Consolas** (with a Korean fallback). On the result page the harmonic
+wheel's dot **colormap is selectable** from a dropdown.
 
 ## 여는 방법 (둘 중 하나)
 

@@ -192,8 +192,12 @@ def tracklist_text(df, numbered=True, sep=" - "):
     return "\n".join(lines)
 
 
-def plot_harmonic_journey(df, output_path, style="bw"):
-    """Square 1:1 Camelot wheel journey plot. Saves PNG + SVG."""
+def plot_harmonic_journey(df, output_path, style="bw", cmap=None):
+    """Square 1:1 Camelot wheel journey plot. Saves PNG + SVG.
+
+    cmap: matplotlib colormap name for the play-order dots/path. None or "bw"
+    uses the default greyscale (light grey -> black).
+    """
     if style not in STYLES:
         raise ValueError(f"unknown style {style!r}")
     S = STYLES[style]
@@ -206,7 +210,10 @@ def plot_harmonic_journey(df, output_path, style="bw"):
     ys = np.array([p[1] for p in xy])
     n_pts = len(xy)
 
-    cmap = S["cmap"] if not isinstance(S["cmap"], str) else plt.get_cmap(S["cmap"])
+    if cmap in (None, "", "bw"):
+        cmap = S["cmap"] if not isinstance(S["cmap"], str) else plt.get_cmap(S["cmap"])
+    else:
+        cmap = plt.get_cmap(cmap)
     norm = Normalize(vmin=0, vmax=max(n_pts - 1, 1))
 
     fig = plt.figure(figsize=(9, 9), facecolor=S["fig_bg"])

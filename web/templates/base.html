@@ -5,47 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}Camelot Journey{% endblock %}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+        href="https://fonts.googleapis.com/css2?family=BBH+Bartle&display=swap">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-  <style>
-    :root {
-      --bg: {{ theme.bg }};
-      --bg2: {{ theme.bg2 }};
-      --surface: {{ theme.surface }};
-      --text: {{ theme.text }};
-      --muted: {{ theme.muted }};
-      --border: {{ theme.border }};
-      --accent: {{ theme.accent }};
-      --accent2: {{ theme.accent2 }};
-      --accent3: {{ theme.accent3 }};
-      --card-shadow: {{ theme.card_shadow }};
-    }
-  </style>
 </head>
-<body class="{{ 'dark' if theme.dark else 'light' }}" data-seed="{{ theme.seed }}">
-
-  <!-- organic / abstract-geometric animated background -->
-  <div class="bg-field" aria-hidden="true">
-    {% for b in theme.blobs %}
-    <span class="blob"
-          style="--bx: {{ b.x }}vw; --by: {{ b.y }}vh; --bs: {{ b.size }}vw;
-                 --bc: {{ b.color }}; --bo: {{ b.opacity }}; --bf: {{ b.blur }}px;
-                 --br: {{ b.radius }}; --bd: {{ b.dur }}s; --bdl: {{ b.delay }}s;
-                 --bdr: {{ b.drift }}vh;"></span>
-    {% endfor %}
-    <svg class="geo" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice">
-      <circle cx="18" cy="26" r="13" fill="none" stroke="{{ theme.accent }}"
-              stroke-width="0.18" opacity="0.5"/>
-      <circle cx="82" cy="72" r="20" fill="none" stroke="{{ theme.accent2 }}"
-              stroke-width="0.18" opacity="0.45"/>
-      <polygon points="70,12 88,30 62,34" fill="none" stroke="{{ theme.accent3 }}"
-               stroke-width="0.18" opacity="0.4"/>
-      <line x1="6" y1="84" x2="40" y2="60" stroke="{{ theme.accent }}"
-            stroke-width="0.16" opacity="0.4"/>
-    </svg>
-  </div>
-
+<body>
   <main class="shell">
     {% with messages = get_flashed_messages() %}
       {% if messages %}
@@ -59,7 +24,6 @@
 
     <footer class="foot">
       <span>Camelot Journey</span>
-      <button id="reshuffle" type="button" title="톤 새로고침">↻ 톤</button>
     </footer>
   </main>
 

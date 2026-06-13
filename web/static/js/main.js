@@ -1,4 +1,4 @@
-// Camelot Journey — landing interactions: drag & drop, filename, reshuffle.
+// Camelot Journey — interactions: drag & drop, copy, submit state, colormap.
 (function () {
   "use strict";
 
@@ -72,11 +72,12 @@
     });
   }
 
-  // Reshuffle colours: reload to get a fresh server-generated palette.
-  var reshuffle = document.getElementById("reshuffle");
-  if (reshuffle) {
-    reshuffle.addEventListener("click", function () {
-      window.location.reload();
+  // Wheel colormap dropdown: regenerate the wheel with the chosen colormap.
+  var cmapSelect = document.getElementById("cmapSelect");
+  if (cmapSelect) {
+    cmapSelect.addEventListener("change", function () {
+      var base = cmapSelect.dataset.base || "";
+      window.location = base + "?cmap=" + encodeURIComponent(cmapSelect.value);
     });
   }
 })();

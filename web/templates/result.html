@@ -20,6 +20,13 @@
       <a class="go small ghost" href="{{ url_for('file', name=wheel.svg, dl=1) }}">SVG ↓</a>
     </div>
   </div>
+  <label class="cmap-row" for="cmapSelect">점 컬러맵
+    <select id="cmapSelect" data-base="{{ url_for('result') }}">
+      {% for value, label in cmaps %}
+      <option value="{{ value }}" {{ 'selected' if value == cmap }}>{{ label }}</option>
+      {% endfor %}
+    </select>
+  </label>
   <img class="fig-img" src="{{ url_for('file', name=wheel.png) }}" alt="harmonic wheel">
 </section>
 
