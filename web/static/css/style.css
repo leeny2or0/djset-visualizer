@@ -163,6 +163,21 @@ code {
 .fig-block .dl-row { margin-top: 10px; justify-content: flex-end; }
 .muted-sm { color: var(--muted); font-size: 0.82rem; font-weight: 500; }
 
+/* ---------- language switch (top-right) ---------- */
+.lang-switch {
+  position: fixed; top: 14px; right: 16px; z-index: 50;
+  display: flex; gap: 2px; padding: 3px;
+  background: var(--surface-2); border: 1px solid var(--border);
+  border-radius: 999px;
+}
+.lang-btn {
+  font: inherit; font-size: 0.78rem; color: var(--muted);
+  background: transparent; border: none; cursor: pointer;
+  padding: 5px 12px; border-radius: 999px; transition: color .2s, background .2s;
+}
+.lang-btn:hover { color: var(--text); }
+.lang-btn.active { color: #000; background: var(--accent); font-weight: 700; }
+
 /* ---------- footer ---------- */
 .foot {
   margin-top: 40px; display: flex; align-items: center; justify-content: space-between;

@@ -6,9 +6,13 @@
   var input = document.getElementById("history");
   var fileName = document.getElementById("fileName");
 
+  function tr(key, fallback) {
+    return (window.I18N && window.I18N.t(key)) || fallback;
+  }
+
   function showName(name) {
     if (!fileName) return;
-    fileName.textContent = "선택됨 · " + name;
+    fileName.textContent = tr("js.selected", "Selected · ") + name;
     fileName.hidden = false;
   }
 
@@ -45,7 +49,7 @@
       if (!area) return;
       var done = function () {
         var old = copyBtn.textContent;
-        copyBtn.textContent = "복사됨 ✓";
+        copyBtn.textContent = tr("js.copied", "Copied ✓");
         copyBtn.classList.add("ok");
         setTimeout(function () {
           copyBtn.textContent = old;
@@ -66,7 +70,7 @@
   var goBtn = document.getElementById("goBtn");
   if (goBtn && goBtn.form) {
     goBtn.form.addEventListener("submit", function () {
-      goBtn.textContent = "이미지 생성 중…";
+      goBtn.textContent = tr("js.generating", "Generating…");
       goBtn.disabled = true;
       goBtn.style.opacity = "0.7";
     });

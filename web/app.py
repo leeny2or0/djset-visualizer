@@ -33,7 +33,7 @@ app.config["MAX_CONTENT_LENGTH"] = 5 * 1024 * 1024  # 5 MB
 
 # Colormaps offered in the wheel's "점 컬러맵" dropdown (value -> label).
 CMAPS = [
-    ("bw", "흑백 (기본)"),
+    ("bw", "B&W (default)"),
     ("viridis", "Viridis"),
     ("plasma", "Plasma"),
     ("magma", "Magma"),

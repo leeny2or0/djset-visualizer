@@ -1,29 +1,31 @@
 {% extends "base.html" %}
-{% block title %}Camelot Journey — 결과{% endblock %}
+{% block title %}Camelot Journey{% endblock %}
 
 {% block content %}
 <section class="hero">
-  <p class="eyebrow">완성됐어요</p>
-  <h1 class="headline">{{ total }}곡.</h1>
+  <p class="eyebrow" data-i18n="res.done">Done</p>
+  <h1 class="headline">{{ total }}<span data-i18n="res.tracksUnit"> tracks.</span></h1>
   <p class="sub">
-    <code>{{ filename }}</code> 에서 트랙 <b>{{ total }}</b>개
-    {% if removed %}(중복 <b>{{ removed }}</b>곡 제거){% endif %},
-    그중 <b>{{ n_keyed }}</b>개에 키 정보가 있어요.
+    <span data-i18n="res.from">From</span> <code>{{ filename }}</code> ·
+    <span data-i18n="res.tracks">Tracks</span> <b>{{ total }}</b>
+    {% if removed %}· <span data-i18n="res.dupesRemoved">Duplicates removed</span> <b>{{ removed }}</b>{% endif %}
+    · <span data-i18n="res.withKey">With key</span> <b>{{ n_keyed }}</b>
   </p>
 </section>
 
 <section class="panel figure">
   <div class="paste-head">
-    <h2>하모닉 휠 이미지</h2>
+    <h2 data-i18n="res.wheelTitle">Harmonic wheel image</h2>
     <div class="dl-row">
       <a class="go small" href="{{ url_for('file', name=wheel.png, dl=1) }}">PNG ↓</a>
       <a class="go small ghost" href="{{ url_for('file', name=wheel.svg, dl=1) }}">SVG ↓</a>
     </div>
   </div>
-  <label class="cmap-row" for="cmapSelect">점 컬러맵
+  <label class="cmap-row" for="cmapSelect"><span data-i18n="res.cmapLabel">Dot colormap</span>
     <select id="cmapSelect" data-base="{{ url_for('result') }}">
       {% for value, label in cmaps %}
-      <option value="{{ value }}" {{ 'selected' if value == cmap }}>{{ label }}</option>
+      <option value="{{ value }}" {{ 'selected' if value == cmap }}
+              {% if value == 'bw' %}data-i18n="cmap.bw"{% endif %}>{{ label }}</option>
       {% endfor %}
     </select>
   </label>
@@ -32,15 +34,15 @@
 
 <section class="panel figure">
   <div class="paste-head">
-    <h2>인스타용 트랙리스트 이미지{% if pages|length > 1 %}
-      <span class="muted-sm">· {{ pages|length }}장</span>{% endif %}</h2>
+    <h2><span data-i18n="res.tracklistTitle">Instagram tracklist image</span>{% if pages|length > 1 %}
+      <span class="muted-sm">· {{ pages|length }}<span data-i18n="res.pagesUnit"> pages</span></span>{% endif %}</h2>
   </div>
   {% for pg in pages %}
   <div class="fig-block">
     <img class="fig-img" src="{{ url_for('file', name=pg.png) }}"
          alt="tracklist page {{ loop.index }}">
     <div class="dl-row">
-      {% if pages|length > 1 %}<span class="muted-sm">{{ loop.index }}장</span>{% endif %}
+      {% if pages|length > 1 %}<span class="muted-sm">p{{ loop.index }}</span>{% endif %}
       <a class="go small" href="{{ url_for('file', name=pg.png, dl=1) }}">PNG ↓</a>
       <a class="go small ghost" href="{{ url_for('file', name=pg.svg, dl=1) }}">SVG ↓</a>
     </div>
@@ -50,16 +52,17 @@
 
 <section class="panel paste">
   <div class="paste-head">
-    <h2>SoundCloud 소개글용 트랙리스트</h2>
-    <button id="copyBtn" class="go small" type="button" data-target="tracklist">복사</button>
+    <h2 data-i18n="res.pasteTitle">Tracklist for SoundCloud</h2>
+    <button id="copyBtn" class="go small" type="button" data-target="tracklist"
+            data-i18n="res.copy">Copy</button>
   </div>
-  <p class="paste-sub"><code>아티스트 - 트랙명</code> 형식이에요.
-     복사해서 사운드클라우드 업로드 소개글에 붙여넣으세요.</p>
+  <p class="paste-sub" data-i18n="res.pasteSub"><code>Artist - Track</code> format.
+     Copy and paste it into your SoundCloud upload description.</p>
   <textarea id="tracklist" class="paste-area mono" rows="12" readonly
             spellcheck="false">{{ tracklist }}</textarea>
 </section>
 
 <div class="panel next-stub">
-  <a class="go ghost" href="{{ url_for('index') }}">← 다른 파일 올리기</a>
+  <a class="go ghost" href="{{ url_for('index') }}" data-i18n="res.another">← Upload another file</a>
 </div>
 {% endblock %}
