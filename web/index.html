@@ -67,6 +67,43 @@
                 spellcheck="false"></textarea>
     </section>
 
+    <!-- image generation status (runs Python in your browser via Pyodide) -->
+    <section class="panel figure" id="imgStatus" hidden>
+      <p class="paste-sub" id="imgStatusText"></p>
+    </section>
+
+    <!-- harmonic wheel image -->
+    <section class="panel figure" id="wheelPanel" hidden>
+      <div class="paste-head">
+        <h2 data-i18n="res.wheelTitle">Harmonic wheel image</h2>
+        <div class="dl-row">
+          <a id="wheelPngDl" class="go small" download="camelot_wheel.png">PNG ↓</a>
+          <a id="wheelSvgDl" class="go small ghost" download="camelot_wheel.svg">SVG ↓</a>
+        </div>
+      </div>
+      <label class="cmap-row" for="cmapSelect"><span data-i18n="res.cmapLabel">Dot colormap</span>
+        <select id="cmapSelect">
+          <option value="bw" data-i18n="cmap.bw">B&amp;W (default)</option>
+          <option value="viridis">Viridis</option>
+          <option value="plasma">Plasma</option>
+          <option value="magma">Magma</option>
+          <option value="inferno">Inferno</option>
+          <option value="cividis">Cividis</option>
+          <option value="turbo">Turbo</option>
+          <option value="cool">Cool</option>
+          <option value="coolwarm">Cool–Warm</option>
+          <option value="Spectral">Spectral</option>
+        </select>
+      </label>
+      <img id="wheelImg" class="fig-img" alt="harmonic wheel">
+    </section>
+
+    <!-- Instagram tracklist image(s) -->
+    <section class="panel figure" id="tlPanel" hidden>
+      <div class="paste-head"><h2 data-i18n="res.tracklistTitle">Instagram tracklist image</h2></div>
+      <div id="tlPages"></div>
+    </section>
+
     <section class="how">
       <h2 data-i18n="idx.howTitle">How to export your history file from rekordbox</h2>
       <ol class="steps">
@@ -84,12 +121,10 @@
           <p data-i18n="idx.s4p">Drop the saved <code>.txt</code> into the upload box
              above. Encodings (UTF-16, etc.) are handled automatically.</p></div></li>
       </ol>
-      <p class="note" data-i18n="idx.noteStatic">Your file is processed entirely in your
-         browser and is never uploaded anywhere. Duplicate tracks are removed automatically.<br>
-         <b>Generating / downloading</b> the wheel &amp; Instagram list images needs the
-         server — in a terminal run
-         <code>cd web &amp;&amp; pip install -r requirements.txt &amp;&amp; python app.py</code>,
-         then open <code>http://127.0.0.1:5000</code>.</p>
+      <p class="note" data-i18n="idx.noteStatic">Everything runs in your browser — your
+         file is never uploaded anywhere, and duplicates are removed automatically. The
+         wheel &amp; tracklist images are generated in-browser (Python via WebAssembly),
+         so the first run downloads the runtime once and may take a little while.</p>
     </section>
 
     <footer class="foot">
@@ -98,6 +133,7 @@
   </main>
 
   <script src="static/js/i18n.js"></script>
+  <script src="static/js/pyodide-app.js"></script>
   <script src="static/js/static-app.js"></script>
 </body>
 </html>
